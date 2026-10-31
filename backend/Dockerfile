@@ -13,6 +13,12 @@ RUN dotnet publish src/DocQa.API -c Release -o /app/publish --no-restore
 # ---- Runtime stage ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
+
+USER root
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
 
 # The official .NET images include a non-root user named "app"

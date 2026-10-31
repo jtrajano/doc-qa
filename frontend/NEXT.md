@@ -1,1 +1,1 @@
-Frontend Dockerfile done. Next: docker-compose for the full stack.
+docker-compose done. Next: CI workflows for backend and frontend, then README polish.
