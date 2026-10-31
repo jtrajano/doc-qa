@@ -1,1 +1,1 @@
-# NEXT
+Repo created. Next: scaffold API (ticket 2).
