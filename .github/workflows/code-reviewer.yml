@@ -19,7 +19,8 @@ jobs:
 
       # Example using a marketplace AI PR Agent
       - name: PR Agent Action
-        uses: Codium-ai/pr-agent@main
+        uses: the-pr-agent/pr-agent@main
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PR_AGENT.MODEL: "gemini/gemini-1.5-flash" 
+          GEMINI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
