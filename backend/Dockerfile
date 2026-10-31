@@ -13,7 +13,6 @@ RUN dotnet publish src/DocQa.API -c Release -o /app/publish --no-restore
 # ---- Runtime stage ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
 
 USER root
 RUN apt-get update \
