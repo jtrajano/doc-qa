@@ -5,9 +5,11 @@ function App() {
 
   useEffect(() => {
     fetch('/health')
-      .then((r) => r.text())
-      .then(setStatus)
-      .catch(() => setStatus('API unreachable'))
+      .then(async (r) => {
+       const text = await r.text()
+       // Vite returns 502 with an empty body when the backend is unreachable.
+       setStatus(r.ok || text !== '' ? text : 'API unreachable')
+    }).catch(() => setStatus('API unreachable'))
   }, [])
 
   return (
