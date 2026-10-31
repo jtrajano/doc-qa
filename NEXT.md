@@ -1,1 +1,1 @@
-API scaffolded with /health and Scalar docs. Next: React + Vite app.
+API Dockerfile done. Next: frontend Dockerfile.
