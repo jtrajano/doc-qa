@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DocQa.API/DocQa.API.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DocQa.API.Tests/DocQa.API.Tests.csproj" />
+  </Folder>
+</Solution>
