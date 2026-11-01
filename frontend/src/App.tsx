@@ -15,7 +15,7 @@ function App() {
   return (
     <main>
       <h1>doc-qa</h1>
-      <p>API status: {status}</p>
+      <p>API Status: {status}</p>
     </main>
   )
 }
