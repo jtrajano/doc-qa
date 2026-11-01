@@ -5,12 +5,39 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  changes:
+    name: changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - "backend/**"
+              - "global.json"
+              - "Directory.Build.props"
+              - "nuget.config"
+              - ".github/workflows/backend-ci.yml"
+
   build-test:
     name: build-test
+    needs: changes
+    # Always run on main; on PRs only when backend-relevant files changed
+    if: github.event_name == 'push' || needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
 
     steps:
