@@ -6,6 +6,11 @@ services:
       context: ./backend
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=DocQa;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env};TrustServerCertificate=True"
+      Database__MigrateOnStartup: "true"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
     ports:
       - "${API_HOST_PORT:-8080}:8080"
     healthcheck:
@@ -14,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-
+  
   web:
     build:
       context: ./frontend
