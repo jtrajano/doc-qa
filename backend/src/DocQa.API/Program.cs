@@ -1,14 +1,29 @@
 
 
+using DocQa.API.Data;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.EnableRetryOnFailure()));
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>("database", tags: ["ready"]);
 
 var app = builder.Build();
+
+// Apply migrations on startup only when explicitly enabled (compose sets this)
+if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -16,19 +31,16 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.MapGet("/health", async (HealthCheckService healthChecks, CancellationToken ct) =>
+// Keep existing /health as-is (liveness), and add a readiness endpoint:
+app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    var report = await healthChecks.CheckHealthAsync(ct);
-    var status = report.Status.ToString();
+    Predicate = check => !check.Tags.Contains("ready")
+});
 
-    return report.Status == HealthStatus.Unhealthy
-        ? Results.Text(status, contentType: "text/plain", statusCode: StatusCodes.Status503ServiceUnavailable)
-        : Results.Text(status, contentType: "text/plain");
-})
-.WithName("HealthCheck")
-.WithTags("Health")
-.Produces<string>(StatusCodes.Status200OK, "text/plain")
-.Produces<string>(StatusCodes.Status503ServiceUnavailable, "text/plain");
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 
 
