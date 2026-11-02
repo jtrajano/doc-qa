@@ -8,9 +8,13 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=DocQa;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env};TrustServerCertificate=True"
       Database__MigrateOnStartup: "true"
+      BlobStorage__ConnectionString: "UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite"
+      BlobStorage__ContainerName: "documents"
     depends_on:
       sqlserver:
         condition: service_healthy
+      azurite:
+        condition: service_started
     ports:
       - "${API_HOST_PORT:-8080}:8080"
     healthcheck:
@@ -19,7 +23,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-  
+    restart: on-failure
+    
   web:
     build:
       context: ./frontend
@@ -70,7 +75,7 @@ services:
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
-    command: azurite -l /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0
+    command: azurite -l /data --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --skipApiVersionCheck  
     ports:
       - "${AZURITE_BLOB_HOST_PORT:-10000}:10000"
       - "${AZURITE_QUEUE_HOST_PORT:-10001}:10001"
