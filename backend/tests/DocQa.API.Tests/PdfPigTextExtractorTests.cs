@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DocQa.API;
-
+﻿using DocQa.API.Exceptions;
 namespace DocQa.API.Tests;
 
 public class PdfPigTextExtractorTests
@@ -19,5 +15,54 @@ public class PdfPigTextExtractorTests
         var page = Assert.Single(result.Pages);
         Assert.Equal(1, page.PageNumber);
         Assert.Contains("Hello world", page.Text);
+    }
+
+    [Fact]
+    public async Task ExtractAsync_CorruptPdf_ThrowsCorruptPdfException()
+    {
+        await using var stream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "TestData", "corrupt.pdf"));
+
+        await Assert.ThrowsAsync<CorruptPdfException>(() => _sut.ExtractAsync(stream));
+    }
+
+    [Fact]
+    public async Task ExtractAsync_PdfWithNoPages_ThrowsEmptyPdfException()
+    {
+        await using var stream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "TestData", "empty.pdf"));
+
+
+
+        await Assert.ThrowsAsync<EmptyPdfException>(() => _sut.ExtractAsync(stream));
+    }
+
+
+    [Fact]
+    public async Task ExtractAsync_PasswordProtectedPdf_ThrowsPasswordProtectedPdfException()
+    {
+        await using var stream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "TestData", "Encrypted.pdf"));
+
+        await Assert.ThrowsAsync<PasswordProtectedPdfException>(() => _sut.ExtractAsync(stream));
+    }
+
+    [Fact]
+    public async Task ExtractAsync_ImageOnlyPdf_ThrowsUnsupportedPdfException()
+    {
+        await using var stream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "TestData", "Picture.pdf"));
+
+        await Assert.ThrowsAsync<UnsupportedPdfException>(() => _sut.ExtractAsync(stream));
+    }
+
+    [Fact]
+    public async Task ExtractAsync_MultiPagePdf_ReturnsEachPageWithCorrectNumberAndText()
+    {
+        using var pdf = TestPdf.WithPages("First page text", "Second page text", "Third page text");
+
+        var result = await _sut.ExtractAsync(pdf);
+
+        Assert.Equal(3, result.Pages.Count);
+        Assert.Equal([1, 2, 3], result.Pages.Select(p => p.PageNumber));
+        Assert.Contains("First page", result.Pages[0].Text);
+        Assert.Contains("Second page", result.Pages[1].Text);
+        Assert.Contains("Third page", result.Pages[2].Text);
     }
 }
