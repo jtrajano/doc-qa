@@ -3,7 +3,7 @@ using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using UglyToad.PdfPig.Writer;
 
-namespace DocQa.API.Tests;
+namespace DocQa.API.Tests.Extraction;
 
 public static class TestPdf
 {

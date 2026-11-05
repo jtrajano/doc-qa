@@ -1,6 +1,6 @@
 ﻿using DocQa.API.Exceptions;
 using DocQa.API.Extraction;
-namespace DocQa.API.Tests;
+namespace DocQa.API.Tests.Extraction;
 
 public class PdfPigTextExtractorTests
 {
