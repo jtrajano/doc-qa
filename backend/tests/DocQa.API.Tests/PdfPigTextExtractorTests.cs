@@ -1,4 +1,5 @@
 ﻿using DocQa.API.Exceptions;
+using DocQa.API.Extraction;
 namespace DocQa.API.Tests;
 
 public class PdfPigTextExtractorTests
@@ -64,5 +65,14 @@ public class PdfPigTextExtractorTests
         Assert.Contains("First page", result.Pages[0].Text);
         Assert.Contains("Second page", result.Pages[1].Text);
         Assert.Contains("Third page", result.Pages[2].Text);
+    }
+
+    [Fact]
+    public void AllExtractionExceptions_DeriveFromPdfExtractionException()
+    {
+        Assert.IsAssignableFrom<PdfExtractionException>(new EmptyPdfException());
+        Assert.IsAssignableFrom<PdfExtractionException>(new CorruptPdfException(new Exception()));
+        Assert.IsAssignableFrom<PdfExtractionException>(new PasswordProtectedPdfException(new Exception()));
+        Assert.IsAssignableFrom<PdfExtractionException>(new UnsupportedPdfException("reason"));
     }
 }

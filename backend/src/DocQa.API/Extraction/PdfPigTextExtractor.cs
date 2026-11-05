@@ -3,7 +3,7 @@ using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Exceptions;
 
-namespace DocQa.API;
+namespace DocQa.API.Extraction;
 public sealed class PdfPigTextExtractor : ITextExtractor
 {
     public Task<ExtractionResult> ExtractAsync(Stream pdf, CancellationToken cancellationToken = default)

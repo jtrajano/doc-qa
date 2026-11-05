@@ -1,11 +1,4 @@
-﻿using UglyToad.PdfPig.Core;
+﻿namespace DocQa.API.Exceptions;
 
-namespace DocQa.API.Exceptions;
-
-public class EmptyPdfException :Exception
-{
-    public EmptyPdfException()
-    {
-        
-    }
-}
+public sealed class EmptyPdfException()
+    : PdfExtractionException("The PDF contains no pages.");

@@ -1,11 +1,4 @@
-﻿using UglyToad.PdfPig.Exceptions;
+﻿namespace DocQa.API.Exceptions;
 
-namespace DocQa.API.Exceptions;
-
-public class PasswordProtectedPdfException : Exception
-{
-    public PasswordProtectedPdfException(PdfDocumentEncryptedException ex)
-    {
-        
-    }
-}
+public sealed class PasswordProtectedPdfException(Exception innerException)
+    : PdfExtractionException("The PDF is password protected.", innerException);

@@ -1,8 +1,4 @@
-﻿using UglyToad.PdfPig.Core;
+﻿namespace DocQa.API.Exceptions;
 
-namespace DocQa.API.Exceptions;
-
-public class UnsupportedPdfException(string message) : Exception(message)
-{
-    
-}
+public sealed class UnsupportedPdfException(string reason)
+    : PdfExtractionException(reason);

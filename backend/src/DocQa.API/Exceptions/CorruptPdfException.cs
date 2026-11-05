@@ -1,16 +1,4 @@
-﻿using UglyToad.PdfPig.Core;
+﻿namespace DocQa.API.Exceptions;
 
-namespace DocQa.API.Exceptions;
-
-public class CorruptPdfException:Exception
-{
-    public CorruptPdfException()
-    {
-        
-    }
-
-    public CorruptPdfException(PdfDocumentFormatException ex)
-    {
-        
-    }
-}
+public sealed class CorruptPdfException(Exception innerException)
+    : PdfExtractionException("The PDF is corrupt or unreadable.", innerException);
