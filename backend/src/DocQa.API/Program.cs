@@ -2,6 +2,7 @@
 
 using Azure.Storage.Blobs;
 using DocQa.API.Data;
+using DocQa.API.Extraction;
 using DocQa.API.Storage;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,8 @@ builder.Services.AddSingleton(sp =>
 });
 builder.Services.AddSingleton<IBlobStorage, AzureBlobStorage>();
 builder.Services.AddHostedService<BlobContainerInitializer>();
+builder.Services.AddScoped<ITextExtractor,PdfPigTextExtractor>();
+
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>("database", tags: ["ready"])
     .AddCheck<BlobStorageHealthCheck>("blob-storage", tags: ["ready"], timeout: TimeSpan.FromSeconds(5));

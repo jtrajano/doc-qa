@@ -25,6 +25,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DocQa.API\DocQa.API.csproj" />
+    <None Update="TestData\*.pdf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestData\" />
   </ItemGroup>
 
 </Project>
