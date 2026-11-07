@@ -139,4 +139,28 @@ public class TextChunkerTests
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateSut(size, overlap));
     }
 
+    [Theory]
+    [InlineData(99)]
+    [InlineData(100)]
+    [InlineData(101)]
+    [InlineData(102)]
+    public void Chunk_TextLengthAroundChunkSize_DoesNotThrow(int length)
+    {
+        var variants = new[]
+        {
+            new string('a', length),                                          // no boundaries
+            new string('a', length - 1) + ".",                                // ends in sentence punctuation
+            new string('a', 50) + "\n\n" + new string('b', length - 52),      // paragraph break inside
+            string.Join(" ", Enumerable.Repeat("ab", length))[..length].TrimEnd(), // spaces
+        };
+
+        foreach (var text in variants)
+        {
+            var result = CreateSut(size: 100, overlap: 20)
+                .Chunk(Guid.NewGuid(), [new PageText(1, text)]);
+
+            Assert.NotEmpty(result);
+            Assert.All(result, c => Assert.True(c.Text.Length <= 100));
+        }
+    }
 }
